@@ -59,4 +59,3 @@ A integração com LLM é opcional e vem desligada; sem ela, o resumo é gerado 
 
 `python -m tools.evaluate --images pasta/ --labels rotulos.csv` (CSV: `arquivo,rotulo` com `ocorrencia`/`normal`).
 Use somente imagens de teste, separadas do treino por cena/vídeo. Para mAP: `python tools/train_detector.py --data data.yaml --val-only`.
-# orbe_computer_vision
