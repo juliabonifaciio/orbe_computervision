@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1130" font-family="Plus Jakarta Sans,Segoe UI,Arial,sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6347e0"/></marker></defs>
+<rect width="1600" height="1130" fill="#f5f4fa"/>
+<text x="40" y="48" font-size="26" font-weight="700" fill="#1b1a2e" text-anchor="start">ORBE · Arquitetura do módulo de Visão Computacional</text>
+<text x="40" y="74" font-size="14.5" font-weight="400" fill="#6a6782" text-anchor="start">Versão atualizada, com a etapa 3 (inferência visual) detalhada. A IA sugere; a confirmação é sempre humana.</text>
+<rect x="40" y="110" width="230" height="118" rx="14" fill="#fff" stroke="#d6d2e4" stroke-width="2"/>
+<circle cx="66" cy="138" r="14" fill="#ece7ff"/>
+<text x="66" y="143" font-size="14" font-weight="700" fill="#6347e0" text-anchor="middle">1</text>
+<text x="88" y="143" font-size="16" font-weight="700" fill="#1b1a2e" text-anchor="start">Captura</text>
+<text x="58" y="172" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">Upload JPG/PNG,</text>
+<text x="58" y="189" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">nome, data/hora, ID</text>
+<text x="58" y="206" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">e origem opcional</text>
+<line x1="272" y1="169.0" x2="289" y2="169.0" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="292" y="110" width="230" height="118" rx="14" fill="#fff" stroke="#d6d2e4" stroke-width="2"/>
+<circle cx="318" cy="138" r="14" fill="#ece7ff"/>
+<text x="318" y="143" font-size="14" font-weight="700" fill="#6347e0" text-anchor="middle">2</text>
+<text x="340" y="143" font-size="16" font-weight="700" fill="#1b1a2e" text-anchor="start">Preparação</text>
+<text x="310" y="172" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">Validação real do arquivo,</text>
+<text x="310" y="189" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">EXIF, RGB, qualidade</text>
+<text x="310" y="206" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">(nitidez e brilho)</text>
+<line x1="524" y1="169.0" x2="541" y2="169.0" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="544" y="110" width="230" height="118" rx="14" fill="#6347e0" stroke="#6347e0" stroke-width="2"/>
+<circle cx="570" cy="138" r="14" fill="#fff"/>
+<text x="570" y="143" font-size="14" font-weight="700" fill="#6347e0" text-anchor="middle">3</text>
+<text x="592" y="143" font-size="16" font-weight="700" fill="#fff" text-anchor="start">Inferência visual</text>
+<text x="562" y="172" font-size="13" font-weight="400" fill="#efe9ff" text-anchor="start">YOLO11 / RT-DETR:</text>
+<text x="562" y="189" font-size="13" font-weight="400" fill="#efe9ff" text-anchor="start">objetos, classes,</text>
+<text x="562" y="206" font-size="13" font-weight="400" fill="#efe9ff" text-anchor="start">confiança e caixas</text>
+<line x1="776" y1="169.0" x2="793" y2="169.0" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="796" y="110" width="230" height="118" rx="14" fill="#fff" stroke="#d6d2e4" stroke-width="2"/>
+<circle cx="822" cy="138" r="14" fill="#ece7ff"/>
+<text x="822" y="143" font-size="14" font-weight="700" fill="#6347e0" text-anchor="middle">4</text>
+<text x="844" y="143" font-size="16" font-weight="700" fill="#1b1a2e" text-anchor="start">Classificação</text>
+<text x="814" y="172" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">Regras + triagem APH</text>
+<text x="814" y="189" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">(rules.json) → 3 estados</text>
+<text x="814" y="206" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">e prioridade</text>
+<line x1="1028" y1="169.0" x2="1045" y2="169.0" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="1048" y="110" width="230" height="118" rx="14" fill="#fff" stroke="#d6d2e4" stroke-width="2"/>
+<circle cx="1074" cy="138" r="14" fill="#ece7ff"/>
+<text x="1074" y="143" font-size="14" font-weight="700" fill="#6347e0" text-anchor="middle">5</text>
+<text x="1096" y="143" font-size="16" font-weight="700" fill="#1b1a2e" text-anchor="start">Resumo (opcional)</text>
+<text x="1066" y="172" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">Texto padrão ou LLM,</text>
+<text x="1066" y="189" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">só lê o resultado;</text>
+<text x="1066" y="206" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">não decide nada</text>
+<line x1="1280" y1="169.0" x2="1297" y2="169.0" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="1300" y="110" width="230" height="118" rx="14" fill="#fff" stroke="#d6d2e4" stroke-width="2"/>
+<circle cx="1326" cy="138" r="14" fill="#ece7ff"/>
+<text x="1326" y="143" font-size="14" font-weight="700" fill="#6347e0" text-anchor="middle">6</text>
+<text x="1348" y="143" font-size="16" font-weight="700" fill="#1b1a2e" text-anchor="start">Validação humana</text>
+<text x="1318" y="172" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">Confirmar e acionar APH ·</text>
+<text x="1318" y="189" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">Rejeitar · Análise adic.</text>
+<text x="1318" y="206" font-size="13" font-weight="400" fill="#6a6782" text-anchor="start">+ andamento do atendimento</text>
+<rect x="40" y="270" width="1520" height="500" rx="20" fill="#fff" stroke="#6347e0" stroke-width="2.5"/>
+<path d="M659.0 228 L659.0 270" stroke="#6347e0" stroke-width="2.2" stroke-dasharray="6 5"/>
+<text x="68" y="310" font-size="18" font-weight="700" fill="#6347e0" text-anchor="start">ETAPA 3 — INFERÊNCIA VISUAL (detalhe)</text>
+<text x="68" y="334" font-size="13.5" font-weight="400" fill="#6a6782" text-anchor="start">services/inference.py · UltralyticsDetector.detect() → run_inference() · independente de Flask</text>
+<rect x="68" y="360" width="270" height="128" rx="12" fill="#ece7ff" stroke="#ece7ff" stroke-width="1.5"/>
+<text x="84" y="390" font-size="14.5" font-weight="700" fill="#6347e0" text-anchor="start">3.1  Entrada</text>
+<text x="84" y="418" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Imagem RGB→BGR</text>
+<text x="84" y="437" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">(ndarray, lado ≤ 2560 px)</text>
+<text x="84" y="456" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Verificada na etapa 2</text>
+<line x1="340" y1="424.0" x2="359" y2="424.0" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="362" y="360" width="270" height="128" rx="12" fill="#ece7ff" stroke="#ece7ff" stroke-width="1.5"/>
+<text x="378" y="390" font-size="14.5" font-weight="700" fill="#6347e0" text-anchor="start">3.2  Pré-processo do modelo</text>
+<text x="378" y="418" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Letterbox para imgsz=640</text>
+<text x="378" y="437" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">(mantém proporção, padding)</text>
+<text x="378" y="456" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">÷255 · float32 · CHW</text>
+<line x1="634" y1="424.0" x2="653" y2="424.0" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="656" y="360" width="270" height="128" rx="12" fill="#ece7ff" stroke="#ece7ff" stroke-width="1.5"/>
+<text x="672" y="390" font-size="14.5" font-weight="700" fill="#6347e0" text-anchor="start">3.3  Rede neural</text>
+<text x="672" y="418" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Backbone (features)</text>
+<text x="672" y="437" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">→ Neck (multiescala)</text>
+<text x="672" y="456" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">→ Head (caixas + classes)</text>
+<line x1="928" y1="424.0" x2="947" y2="424.0" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="950" y="360" width="270" height="128" rx="12" fill="#ece7ff" stroke="#ece7ff" stroke-width="1.5"/>
+<text x="966" y="390" font-size="14.5" font-weight="700" fill="#6347e0" text-anchor="start">3.4  Pós-processo</text>
+<text x="966" y="418" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Limiar de confiança 0,25</text>
+<text x="966" y="437" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">NMS IoU 0,5 · agnóstico</text>
+<text x="966" y="456" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Caixas → pixels da imagem</text>
+<line x1="1222" y1="424.0" x2="1241" y2="424.0" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="1244" y="360" width="270" height="128" rx="12" fill="#ece7ff" stroke="#ece7ff" stroke-width="1.5"/>
+<text x="1260" y="390" font-size="14.5" font-weight="700" fill="#6347e0" text-anchor="start">3.5  Detecções</text>
+<text x="1260" y="418" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">classe · confiança</text>
+<text x="1260" y="437" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">bbox [x1,y1,x2,y2]</text>
+<text x="1260" y="456" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">categoria (rules.json)</text>
+<rect x="68" y="516" width="730" height="222" rx="14" fill="#f6f3ff" stroke="#d9cffb" stroke-width="1.5"/>
+<rect x="822" y="516" width="710" height="222" rx="14" fill="#e1f3fd" stroke="#bde3f8" stroke-width="1.5"/>
+<text x="88" y="550" font-size="15.5" font-weight="700" fill="#6347e0" text-anchor="start">Modo A — modelo com classes de acidente (a treinar)</text>
+<text x="88" y="578" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Pesos: models/modelo_visao.pt (fine-tuning de YOLO11/RT-DETR).</text>
+<text x="88" y="597" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Classes: collision, vehicle_fire, overturned_vehicle… + veículos.</text>
+<text x="88" y="616" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Detecção de classe de acidente com confiança ≥ 0,50, área mínima e</text>
+<text x="88" y="635" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">corroboração (confiança ≥ 0,70, veículo sobreposto ou ≥ 2 detecções)</text>
+<text x="88" y="654" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">→ POSSÍVEL OCORRÊNCIA (regra A1). Caso contrário → INCONCLUSIVO (A2/A3).</text>
+<text x="88" y="673" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Datasets candidatos: TUMTraf-Accid3nD (câmeras de rodovia, 2D).</text>
+<text x="842" y="550" font-size="15.5" font-weight="700" fill="#0f4c73" text-anchor="start">Modo B — modelo genérico COCO (padrão do protótipo)</text>
+<text x="842" y="578" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Pesos: yolo11s.pt (COCO). NÃO reconhece acidentes: só veículos/pessoas.</text>
+<text x="842" y="597" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Usa apenas indício geométrico: IoU entre veículos (conf ≥ 0,50):</text>
+<text x="842" y="616" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">IoU 0,50–0,90 → POSSÍVEL (G1, rotulado como indício);</text>
+<text x="842" y="635" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">IoU 0,30–0,50 → INCONCLUSIVO (G2); sem indício → NENHUMA.</text>
+<text x="842" y="654" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Nunca apresentado como reconhecimento comprovado de acidente.</text>
+<text x="842" y="673" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">Ativado automaticamente se o modelo não tiver classes de acidente.</text>
+<line x1="800.0" y1="488" x2="800.0" y2="512" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="40" y="800" width="1520" height="290" rx="14" fill="#fff" stroke="#d6d2e4" stroke-width="1.5"/>
+<text x="68" y="838" font-size="18" font-weight="700" fill="#1b1a2e" text-anchor="start">Do resultado automático ao registro auditável</text>
+<rect x="68" y="860" width="330" height="92" rx="14" fill="#fdecec" stroke="#f3c5c7" stroke-width="1.5"/>
+<text x="84" y="890" font-size="15" font-weight="700" fill="#a5262c" text-anchor="start">Possível ocorrência</text>
+<text x="84" y="914" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">notifica e define a prioridade APH;</text>
+<text x="84" y="933" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">entra na fila de revisão</text>
+<rect x="68" y="966" width="330" height="92" rx="14" fill="#fff3d9" stroke="#f0d9a3" stroke-width="1.5"/>
+<text x="84" y="996" font-size="15" font-weight="700" fill="#9a6208" text-anchor="start">Inconclusivo</text>
+<text x="84" y="1020" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">sem notificação; revisão</text>
+<text x="84" y="1039" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">humana recomendada</text>
+<rect x="420" y="860" width="330" height="92" rx="14" fill="#e0f5ed" stroke="#b7e5d4" stroke-width="1.5"/>
+<text x="436" y="890" font-size="15" font-weight="700" fill="#0f8a67" text-anchor="start">Nenhuma ocorrência</text>
+<text x="436" y="914" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">apenas histórico (SQLite);</text>
+<text x="436" y="933" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">não exige validação</text>
+<rect x="420" y="966" width="330" height="92" rx="14" fill="#fff" stroke="#d6d2e4" stroke-width="1.5"/>
+<text x="436" y="996" font-size="15" font-weight="700" fill="#1b1a2e" text-anchor="start">Tabela analyses</text>
+<text x="436" y="1020" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">resultado automático — imutável</text>
+<rect x="800" y="860" width="330" height="92" rx="14" fill="#ece7ff" stroke="#d9cffb" stroke-width="1.5"/>
+<text x="816" y="890" font-size="15" font-weight="700" fill="#6347e0" text-anchor="start">Decisão humana</text>
+<text x="816" y="914" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">human_decisions (append-only):</text>
+<text x="816" y="933" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">operador · data · observações</text>
+<line x1="750" y1="1012" x2="798" y2="920" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<rect x="1180" y="840" width="350" height="100" rx="14" fill="#e0f5ed" stroke="#b7e5d4" stroke-width="1.5"/>
+<text x="1196" y="870" font-size="15" font-weight="700" fill="#0f8a67" text-anchor="start">Confirmar / corrigir</text>
+<text x="1196" y="894" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">→ definitive_occurrences + dispatch_events</text>
+<text x="1196" y="913" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">(evidência + responsável + modelo)</text>
+<rect x="1180" y="956" width="350" height="100" rx="14" fill="#f1f1f1" stroke="#d6d2e4" stroke-width="1.5"/>
+<text x="1196" y="986" font-size="15" font-weight="700" fill="#555" text-anchor="start">Rejeitar</text>
+<text x="1196" y="1010" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">NÃO vira ocorrência definitiva;</text>
+<text x="1196" y="1029" font-size="13" font-weight="400" fill="#1b1a2e" text-anchor="start">decisão guardada para auditoria</text>
+<line x1="1130" y1="900" x2="1178" y2="890" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<line x1="1130" y1="912" x2="1178" y2="1000" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+<text x="1180" y="1078" font-size="12.5" font-weight="400" fill="#6a6782" text-anchor="start">Análise adicional mantém o caso aberto na fila.</text>
+<line x1="1500" y1="770" x2="1500" y2="794" stroke="#6347e0" stroke-width="2.2" marker-end="url(#a)"/>
+</svg>

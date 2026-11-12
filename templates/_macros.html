@@ -1,0 +1,11 @@
+{% set RESULT_LABELS = {'possible': 'Possível ocorrência', 'none': 'Sem ocorrência', 'inconclusive': 'Inconclusivo'} %}
+{% set STATUS_LABELS = {'pending': 'Aguardando validação', 'additional_review': 'Análise adicional', 'confirmed': 'Confirmada', 'corrected': 'Corrigida', 'rejected': 'Rejeitada', 'not_required': 'Não requer validação'} %}
+{% macro icon(name, cls='') -%}
+<svg class="ic {{ cls }}" aria-hidden="true"><use href="#i-{{ name }}"/></svg>
+{%- endmacro %}
+{% macro result_badge(r) -%}
+<span class="badge res-{{ r }}"><i class="dot"></i>{{ RESULT_LABELS.get(r, r) }}</span>
+{%- endmacro %}
+{% macro status_badge(s) -%}
+<span class="badge st-{{ s }}">{{ STATUS_LABELS.get(s, s) }}</span>
+{%- endmacro %}

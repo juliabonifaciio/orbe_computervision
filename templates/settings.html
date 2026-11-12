@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Configurações{% endblock %}
+{% block page %}settings{% endblock %}
+{% block content %}
+<div class="page-head rise"><div><h1>Configurações</h1><p class="sub">Parâmetros em uso (somente leitura). Para alterar, edite <code>rules.json</code> ou <code>.env</code> e reinicie a aplicação.</p></div></div>
+
+<section class="panel rise">
+  <h2>Modelo de visão computacional</h2>
+  <dl class="dl">
+    <dt>Arquivo</dt><dd>{{ detector.name }}</dd>
+    <dt>Origem</dt><dd>{{ detector.source or '— (carregado na primeira análise)' }}</dd>
+    <dt>Família</dt><dd>{{ detector.family | upper }}</dd>
+    <dt>Tamanho de entrada</dt><dd>{{ detector.imgsz }} px</dd>
+    <dt>Estado</dt><dd>{% if detector.error %}<span class="badge res-possible">{{ detector.error }}</span>{% elif detector.loaded %}Carregado{% else %}Ainda não carregado{% endif %}</dd>
+    <dt>Pesos customizados</dt><dd><code>{{ cfg.MODEL_PATH.name }}</code> — se existir em <code>models/</code>, é usado; caso contrário, usa-se o modelo genérico <code>{{ cfg.FALLBACK_MODEL }}</code>.</dd>
+  </dl>
+  <p class="callout">Um modelo genérico (COCO) detecta veículos e pessoas, mas <strong>não foi treinado para reconhecer acidentes</strong>. Nesse modo o ORBE usa apenas indícios geométricos e os identifica como tal. O modo “acidentes” é ativado automaticamente quando o modelo possui classes de acidente.</p>
+</section>
+
+<section class="panel rise">
+  <h2>Regras de classificação</h2>
+  <div class="rules-grid">
+    <div><h3>Modelo com classes de acidente</h3><dl class="dl">
+      <dt>Confiança para “possível”</dt><dd>≥ {{ '%.0f' % (rules.accident_model.possible_min_confidence*100) }}%</dd>
+      <dt>Confiança forte (sem corroboração)</dt><dd>≥ {{ '%.0f' % (rules.accident_model.strong_confidence*100) }}%</dd>
+      <dt>Confiança mínima p/ inconclusivo</dt><dd>≥ {{ '%.0f' % (rules.accident_model.inconclusive_min_confidence*100) }}%</dd>
+      <dt>Área mínima da caixa</dt><dd>{{ '%.1f' % (rules.accident_model.min_box_area_ratio*100) }}% da imagem</dd></dl></div>
+    <div><h3>Modelo genérico (indícios)</h3><dl class="dl">
+      <dt>Confiança mín. dos veículos</dt><dd>≥ {{ '%.0f' % (rules.generic_model.min_vehicle_confidence*100) }}%</dd>
+      <dt>IoU p/ “possível”</dt><dd>{{ rules.generic_model.overlap_possible_iou }} – {{ rules.generic_model.overlap_max_iou }}</dd>
+      <dt>IoU p/ “inconclusivo”</dt><dd>{{ rules.generic_model.overlap_inconclusive_iou }} – {{ rules.generic_model.overlap_possible_iou }}</dd></dl></div>
+    <div><h3>Qualidade da imagem</h3><dl class="dl">
+      <dt>Nitidez mínima (Laplaciano)</dt><dd>{{ rules.quality.min_laplacian_variance }}</dd>
+      <dt>Brilho médio aceito</dt><dd>{{ rules.quality.min_mean_brightness }} – {{ rules.quality.max_mean_brightness }}</dd></dl></div>
+    <div><h3>Triagem APH</h3><dl class="dl">
+      <dt>Confiança mínima dos itens</dt><dd>{{ '%.0f' % (rules.aph.min_confidence*100) }}%</dd>
+      <dt>Veículos para prioridade alta</dt><dd>{{ rules.aph.many_vehicles }} ou mais</dd>
+      <dt>Classes pesadas</dt><dd>{{ rules.aph.heavy_classes | join(', ') }}</dd>
+      <dt>Pessoas / duas rodas</dt><dd>{{ rules.aph.people_classes | join(', ') }} / {{ rules.aph.two_wheeler_classes | join(', ') }}</dd></dl></div>
+    <div><h3>Notificação</h3><dl class="dl">
+      <dt>Notificar operador quando</dt><dd>{{ rules.notification.notify_on | join(', ') }}</dd>
+      <dt>Exigir revisão quando</dt><dd>{{ rules.notification.review_on | join(', ') }}</dd></dl></div>
+  </div>
+</section>
+
+<section class="panel rise">
+  <h2>Sistema</h2>
+  <dl class="dl">
+    <dt>Formatos aceitos</dt><dd>{{ cfg.ALLOWED_EXTENSIONS | sort | join(', ') | upper }}</dd>
+    <dt>Tamanho máximo</dt><dd>{{ cfg.MAX_UPLOAD_MB }} MB</dd>
+    <dt>Resumo com LLM</dt><dd>{{ 'Ativo (' ~ llm.provider ~ ')' if llm.enabled else 'Desligado — resumo gerado por texto padrão, sem rede' }}</dd>
+  </dl>
+</section>
+{% endblock %}

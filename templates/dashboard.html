@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Central APH{% endblock %}
+{% block page %}dashboard{% endblock %}
+{% block content %}
+<section class="panel hero rise">
+  <div>
+    <div class="persona"><i></i> Persona 3 · Agente de Atendimento Pré-Hospitalar</div>
+    <h1>Veja a ocorrência antes de a ligação terminar.</h1>
+    <p>O ORBE olha a imagem da câmera, aponta uma possível ocorrência, resume o que aparece na cena e sugere recursos. Você confere a imagem e só então aciona a equipe.</p>
+    <a class="btn primary" href="{{ url_for('analysis.analysis_page') }}">{{ icon('scan') }} Analisar uma imagem</a>
+  </div>
+  <div class="orbit-box" data-orbit="hero"></div>
+</section>
+
+<section class="kpis">
+  <article class="kpi rise" style="--i:1"><span>Imagens analisadas</span><strong data-count="{{ stats.total }}">0</strong></article>
+  <article class="kpi lilac rise" style="--i:2"><span>Aguardando validação</span><strong data-count="{{ stats.awaiting }}">0</strong></article>
+  <article class="kpi red rise" style="--i:3"><span>Prioridade alta na fila</span><strong data-count="{{ stats.high_priority }}">0</strong></article>
+  <article class="kpi green rise" style="--i:4"><span>Equipes em atendimento</span><strong data-count="{{ stats.active_dispatch }}">0</strong></article>
+</section>
+
+<div class="two-col">
+  <section class="panel rise" style="--i:5">
+    <div class="panel-head"><h2>Fila prioritária</h2><a class="link" href="{{ url_for('history.review_page') }}">Ver fila completa</a></div>
+    <div class="queue" id="queueBox"><div class="skeleton"></div><div class="skeleton"></div></div>
+  </section>
+  <section class="panel rise" style="--i:6">
+    <div class="panel-head"><h2>Atendimentos em andamento</h2></div>
+    <div class="queue" id="activeBox"><div class="skeleton"></div></div>
+    <p class="disc">Totais: {{ stats.possible }} possível(is) ocorrência(s), {{ stats.inconclusive }} inconclusiva(s), {{ stats.none }} sem ocorrência.{% if stats.avg_inference_ms %} Inferência média: {{ stats.avg_inference_ms }} ms.{% endif %}</p>
+  </section>
+</div>
+{% endblock %}

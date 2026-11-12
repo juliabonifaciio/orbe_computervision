@@ -1,0 +1,9 @@
+# ORBE — Módulo de Visão Computacional
+# Python recomendado: 3.10 a 3.12 (compatível com as rodas do PyTorch)
+flask>=3.0
+numpy>=1.26
+opencv-python>=4.9
+pillow>=10.0
+scikit-learn>=1.4
+ultralytics>=8.3      # instala também o PyTorch; fornece YOLO11/YOLOv8 e RT-DETR
+pytest>=8.0           # apenas para executar os testes

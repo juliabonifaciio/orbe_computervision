@@ -1,0 +1,78 @@
+{
+  "inference": {
+    "min_detection_confidence": 0.25,
+    "nms_iou": 0.5,
+    "agnostic_nms": true
+  },
+  "classes": {
+    "vehicle": [
+      "car",
+      "motorcycle",
+      "bus",
+      "truck"
+    ],
+    "vulnerable": [
+      "person",
+      "bicycle"
+    ],
+    "accident": [
+      "accident",
+      "crash",
+      "collision",
+      "vehicle_collision",
+      "overturned_vehicle",
+      "vehicle_fire",
+      "fire",
+      "rollover"
+    ]
+  },
+  "accident_model": {
+    "possible_min_confidence": 0.5,
+    "strong_confidence": 0.7,
+    "inconclusive_min_confidence": 0.25,
+    "min_box_area_ratio": 0.002
+  },
+  "generic_model": {
+    "min_vehicle_confidence": 0.5,
+    "overlap_possible_iou": 0.5,
+    "overlap_inconclusive_iou": 0.3,
+    "overlap_max_iou": 0.9
+  },
+  "quality": {
+    "min_laplacian_variance": 40.0,
+    "min_mean_brightness": 35.0,
+    "max_mean_brightness": 225.0
+  },
+  "notification": {
+    "notify_on": [
+      "possible"
+    ],
+    "review_on": [
+      "possible",
+      "inconclusive"
+    ]
+  },
+  "aph": {
+    "min_confidence": 0.4,
+    "heavy_classes": [
+      "truck",
+      "bus"
+    ],
+    "two_wheeler_classes": [
+      "motorcycle",
+      "bicycle"
+    ],
+    "people_classes": [
+      "person"
+    ],
+    "fire_classes": [
+      "vehicle_fire",
+      "fire"
+    ],
+    "rollover_classes": [
+      "overturned_vehicle",
+      "rollover"
+    ],
+    "many_vehicles": 3
+  }
+}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Fila de acionamento' if review else 'Histórico' }}{% endblock %}
+{% block page %}{{ 'queue' if review else 'history' }}{% endblock %}
+{% block content %}
+<div class="page-head rise"><div>
+  <h1>{{ 'Fila de acionamento' if review else 'Histórico de análises' }}</h1>
+  <p class="sub">{{ 'Ocorrências que ainda precisam da sua decisão, da mais urgente para a menos urgente.' if review else 'Consulte as análises anteriores, as decisões e o andamento dos atendimentos.' }}</p></div></div>
+
+{% if review %}
+<div class="queue" id="queueBox"><div class="skeleton"></div><div class="skeleton"></div></div>
+{% else %}
+<form class="filters panel rise" id="filters" style="--i:1">
+  <div class="field grow"><label for="fq">Buscar</label><input type="search" id="fq" name="q" placeholder="Arquivo, origem ou ID"></div>
+  <div class="field"><label for="fres">Resultado</label><select id="fres" name="result"><option value="">Todos</option><option value="possible">Possível ocorrência</option><option value="inconclusive">Inconclusivo</option><option value="none">Sem ocorrência</option></select></div>
+  <div class="field"><label for="fst">Validação</label><select id="fst" name="status"><option value="">Todas</option><option value="pending">Aguardando validação</option><option value="additional_review">Análise adicional</option><option value="confirmed">Confirmada</option><option value="corrected">Corrigida</option><option value="rejected">Rejeitada</option><option value="not_required">Não requer validação</option></select></div>
+  <div class="field"><label for="fdf">De</label><input type="date" id="fdf" name="date_from"></div>
+  <div class="field"><label for="fdt">Até</label><input type="date" id="fdt" name="date_to"></div>
+  <button type="button" class="btn ghost" id="fclear">Limpar</button>
+</form>
+<section class="panel rise" style="--i:2">
+  <div class="table-wrap"><table class="table" id="historyTable">
+    <thead><tr><th>Imagem</th><th>Data e hora</th><th>Prioridade</th><th>Classes</th><th class="num">Confiança</th><th>Validação</th><th>Atendimento</th><th></th></tr></thead>
+    <tbody id="historyBody"></tbody>
+  </table></div>
+  <div class="empty" id="historyEmpty" hidden><p></p></div>
+  <p class="foot muted" id="historyCount"></p>
+</section>
+{% endif %}
+{% endblock %}

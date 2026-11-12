@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}Analisar imagem{% endblock %}
+{% block page %}analysis{% endblock %}
+{% block content %}
+<div class="page-head rise"><div><h1>Analisar imagem</h1><p class="sub">Envie a imagem da câmera da rodovia. O ORBE detecta veículos e pessoas, monta o resumo da cena e diz se a equipe APH deve ser avisada.</p></div></div>
+
+<section class="panel rise" style="--i:1">
+  <form id="analysisForm" novalidate>
+    <div class="upload-grid">
+      <label class="dropzone" id="dropzone" for="fileInput" tabindex="0">
+        <input type="file" id="fileInput" name="image" accept=".jpg,.jpeg,.png,image/jpeg,image/png" hidden>
+        <div class="dz-empty" id="dzEmpty">{{ icon('upload', 'xl') }}<strong>Arraste a imagem aqui ou clique para escolher</strong><span>JPG, JPEG ou PNG · até {{ max_mb }} MB</span></div>
+        <img id="preview" alt="Imagem selecionada" hidden>
+        <div class="scan" id="scan" hidden>
+          <i class="corner a"></i><i class="corner b"></i><i class="corner c"></i><i class="corner d"></i>
+          <div data-orbit="sm"></div>
+          <ul class="steps" id="steps"></ul>
+        </div>
+      </label>
+      <div class="upload-side">
+        <div class="field"><label for="sourceInput">Origem da imagem <small>(opcional)</small></label>
+          <input type="text" id="sourceInput" name="source" maxlength="120" placeholder="Ex.: Câmera 12, km 85 Norte"></div>
+        <div class="file-meta" id="fileMeta" hidden></div>
+        <div class="actions">
+          <button type="submit" class="btn primary" id="analyzeBtn" disabled>{{ icon('scan') }} Analisar</button>
+          <button type="button" class="btn ghost" id="clearBtn">Limpar</button>
+        </div>
+        <p class="hint">A primeira análise demora um pouco mais porque o modelo precisa carregar.</p>
+      </div>
+    </div>
+  </form>
+</section>
+
+<div id="result" hidden></div>
+<script>window.ORBE_TYPES = {{ types | tojson }};</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% from "_macros.html" import icon %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ORBE{% endblock %} · ORBE APH</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo-orbe-simbolo.png') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body data-page="{% block page %}{% endblock %}">
+{% include "_icons.html" %}
+<div class="bg-orbit" data-orbit="bg"></div>
+<div class="shell">
+  <aside class="sidebar">
+    <a class="brand" href="{{ url_for('main.dashboard') }}">
+      <img src="{{ url_for('static', filename='images/logo-orbe.png') }}" alt="ORBE - A Inteligência que conecta a ocorrência">
+    </a>
+    <nav>
+      <a class="nav-item {{ 'active' if active=='dashboard' }}" href="{{ url_for('main.dashboard') }}">{{ icon('dashboard') }}<span>Central APH</span></a>
+      <a class="nav-item {{ 'active' if active=='analysis' }}" href="{{ url_for('analysis.analysis_page') }}">{{ icon('scan') }}<span>Analisar imagem</span></a>
+      <a class="nav-item {{ 'active' if active=='review' }}" href="{{ url_for('history.review_page') }}">{{ icon('shield') }}<span>Fila de acionamento</span><b id="reviewBadge" class="count" hidden>0</b></a>
+      <a class="nav-item {{ 'active' if active=='history' }}" href="{{ url_for('history.history_page') }}">{{ icon('history') }}<span>Histórico</span></a>
+      <a class="nav-item {{ 'active' if active=='settings' }}" href="{{ url_for('main.settings') }}">{{ icon('settings') }}<span>Configurações</span></a>
+    </nav>
+    <p class="side-note"><strong>A IA sugere, a pessoa decide.</strong><br>O acionamento da equipe APH só é registrado depois que um operador confirma a imagem.</p>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="name">ORBE <span class="module">Visão Computacional</span></div>
+        <div class="tagline">Inteligência que conecta a ocorrência</div>
+      </div>
+      <div class="health" id="health" data-state="idle"><i class="pulse"></i><span>Verificando...</span></div>
+    </header>
+    <main class="content">{% block content %}{% endblock %}</main>
+  </div>
+</div>
+<div id="toasts" class="toasts"></div>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

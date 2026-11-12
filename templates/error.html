@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Erro {{ code }}{% endblock %}
+{% block content %}
+<section class="panel empty rise"><h1>{{ code }}</h1><p>{{ message }}</p><a class="btn primary" href="{{ url_for('main.dashboard') }}">Voltar para a Central</a></section>
+{% endblock %}

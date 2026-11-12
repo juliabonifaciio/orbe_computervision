@@ -1,0 +1,139 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>ORBE — Relatório Técnico (Visão Computacional)</title>
+<style>
+@page{size:A4;margin:20mm 18mm}
+body{font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;color:#1b1a2e;line-height:1.55;font-size:10.5pt;max-width:900px;margin:0 auto;padding:0 12px}
+h1{font-size:22pt;margin:0 0 4px;color:#3d2aa8} h2{font-size:14pt;color:#4a35c4;border-bottom:2px solid #ece7ff;padding-bottom:4px;margin-top:26px;break-after:avoid} h3{font-size:11.5pt;margin:16px 0 4px}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:9pt;break-inside:auto} th{background:#ece7ff;text-align:left} th,td{border:1px solid #d6d2e4;padding:5px 7px;vertical-align:top} tr{break-inside:avoid}
+code{background:#f6f3ff;padding:1px 4px;border-radius:4px;font-size:9pt} pre{background:#f6f3ff;padding:10px;border-radius:8px;font-size:8.5pt;overflow:auto}
+.cap{font-size:8.5pt;color:#6a6782;margin-top:2px} img{max-width:100%} .box{border-left:4px solid #6347e0;background:#f6f3ff;padding:8px 12px;margin:12px 0;border-radius:0 8px 8px 0}
+.warn{border-left-color:#d98e04;background:#fff7e3} .cover{margin-bottom:10px} .meta{color:#6a6782}
+</style></head><body>
+<div class="cover"><h1>ORBE — Módulo de Visão Computacional</h1>
+<div class="meta">Relatório técnico da implementação do protótipo · Challenge Motiva · Inteligência Artificial</div></div>
+
+<div class="box warn"><strong>Transparência sobre os resultados.</strong> Este relatório só apresenta resultados efetivamente obtidos. Os <strong>testes automatizados</strong> (75, todos aprovados) verificam a lógica do sistema usando um detector de teste e imagens sintéticas. <strong>Não foram medidos</strong> precisão, recall, F1 ou mAP do modelo em imagens reais, porque os datasets não estavam disponíveis no ambiente de desenvolvimento (o material recebido continha apenas a planilha e o PDF da etapa anterior) e os pesos do modelo precisam ser baixados na máquina do usuário. A seção 15 explica como obter essas métricas.</div>
+
+<h2>1. Introdução</h2>
+<p>O ORBE é um copiloto de IA para apoiar operações rodoviárias da Motiva. Esta etapa implementa o módulo de visão computacional: recebe uma imagem de câmera, executa inferência com um modelo de detecção de objetos, aplica regras de classificação e informa se o operador deve ser notificado de uma <em>possível</em> ocorrência. O princípio central, herdado da arquitetura anterior, é <em>human-in-the-loop</em>: a IA sugere e a pessoa decide.</p>
+<p>A entrega anterior recebeu três observações do professor: (i) falta de relatório explicativo; (ii) diagrama superficial, sobretudo na etapa 3 (inferência visual); (iii) ausência de modelos candidatos. Este documento responde a (i); o diagrama da seção 7 responde a (ii); a seção 5 responde a (iii).</p>
+
+<h2>2. Objetivo</h2>
+<p>Implementar um protótipo executável localmente que: receba JPG/PNG; pré-processe; execute inferência real; organize detecções; classifique em <em>possível ocorrência</em>, <em>nenhuma ocorrência</em> ou <em>inconclusivo</em>; indique notificação; permita confirmar, rejeitar ou solicitar análise adicional; e mantenha histórico auditável, separando o resultado automático da decisão humana.</p>
+
+<h2>3. Tecnologias utilizadas</h2>
+<table><tr><th>Camada</th><th>Tecnologia</th><th>Uso</th></tr>
+<tr><td>Back-end</td><td>Python, Flask</td><td>Rotas HTTP, fábrica de aplicação, serviços separados</td></tr>
+<tr><td>IA</td><td>Ultralytics (YOLO11/YOLOv8, RT-DETR) sobre PyTorch</td><td>Detecção de objetos</td></tr>
+<tr><td>Imagens</td><td>OpenCV, NumPy, Pillow</td><td>Leitura, verificação, qualidade, desenho das caixas</td></tr>
+<tr><td>Métricas</td><td>scikit-learn</td><td><code>tools/evaluate.py</code>: precisão, recall, F1, matriz de confusão</td></tr>
+<tr><td>Armazenamento</td><td>SQLite (stdlib) + diretórios <code>uploads/</code> e <code>processed/</code></td><td>Análises, decisões humanas, ocorrências definitivas</td></tr>
+<tr><td>Front-end</td><td>HTML5, CSS3, JavaScript puro; ícones Lucide embutidos (SVG)</td><td>Interface sem dependências externas (exceto a fonte, com fallback)</td></tr>
+<tr><td>Testes</td><td>pytest</td><td>75 testes</td></tr></table>
+
+<h2>4. Datasets e suas características</h2>
+<p>As informações abaixo vêm da planilha da etapa anterior (pesquisa de 28/10/2026) e <strong>não foram reverificadas</strong>; disponibilidade, formato e licença precisam ser conferidos antes de qualquer download ou treino. Nenhum dataset foi baixado nesta etapa.</p>
+<table><tr><th>Dataset</th><th>Tipo / câmera</th><th>Anotações (segundo a planilha)</th><th>Adequação ao protótipo (imagem única)</th></tr>
+<tr><td>TUMTraf-Accid3nD</td><td>Câmeras rodoviárias + LiDAR; acidentes reais</td><td>Caixas 2D/3D, máscaras, IDs</td><td><strong>Mais adequado</strong> para ajustar um detector com classes de acidente (câmera de rodovia, caixas 2D). Requer conversão para o formato YOLO e conferência da licença.</td></tr>
+<tr><td>UA-DETRAC</td><td>Câmeras fixas, vídeos de tráfego</td><td>Caixas de veículos, iluminação, oclusão</td><td>Útil para robustez na detecção de veículos em câmera fixa; <strong>não contém acidentes</strong>.</td></tr>
+<tr><td>BDD100K</td><td>Dashcam; cena rodoviária geral</td><td>10 tarefas de percepção</td><td>Complemento para a cena; domínio dashcam; volume grande (≈1,8 TB de vídeo).</td></tr>
+<tr><td>RDD2022</td><td>Imagens de pavimento</td><td>Tipos de dano</td><td>Outra tarefa (dano no pavimento); fora do escopo desta etapa.</td></tr>
+<tr><td>DoTA</td><td>Dashcam; anomalias</td><td>Tempo da anomalia, classe, caixas</td><td>Vídeo e dashcam: adequado a um módulo <strong>temporal</strong> futuro, não à imagem única.</td></tr>
+<tr><td>AI City 2021 Track 4</td><td>Câmeras de tráfego, 410p</td><td>Intervalos de tempo da anomalia (sem caixas)</td><td>Avaliação temporal (início/fim); sem caixas não treina detector.</td></tr>
+<tr><td>ACCIDENT</td><td>Câmeras de monitoramento (reais e sintéticos)</td><td>Tempo, local e tipo da colisão</td><td>Promissor para câmera fixa; verificar acesso e licença; trabalho recente.</td></tr>
+<tr><td>Nexar</td><td>Dashcam; colisão/quase-colisão</td><td>Rótulos do evento, horários</td><td>Previsão de risco em vídeo; domínio dashcam; não confirma acidente.</td></tr></table>
+<p><strong>Conclusão sobre os datasets:</strong> não são diretamente compatíveis entre si (dashcam × câmera fixa × pavimento; vídeo com marcação temporal × imagens com caixas). Para um detector de imagem única com classes de acidente, o candidato principal é o TUMTraf-Accid3nD, com UA-DETRAC como apoio de veículos. Os demais ficam para uma etapa temporal.</p>
+
+<h2>5. Modelos candidatos</h2>
+<table><tr><th>Modelo</th><th>Tarefa</th><th>Vantagens</th><th>Limitações</th><th>Compatibilidade com os datasets</th><th>Adequação</th></tr>
+<tr><td><strong>YOLO11</strong> (Ultralytics)</td><td>Detecção (caixas)</td><td>Rápido, ecossistema maduro, treino personalizado simples, várias escalas (n/s/m/l/x)</td><td>Pesos pré-treinados genéricos (COCO) não conhecem acidentes; licença AGPL-3.0 (verificar para uso comercial)</td><td>Formato YOLO; conversão de datasets com caixas 2D (TUMTraf, UA-DETRAC, BDD100K)</td><td><strong>Alta — escolhido</strong></td></tr>
+<tr><td>YOLOv8</td><td>Detecção</td><td>Mesma API; muito documentado</td><td>Geração anterior à YOLO11</td><td>Idem</td><td>Alta (alternativa equivalente)</td></tr>
+<tr><td>RT-DETR</td><td>Detecção baseada em Transformer</td><td>Sem NMS no projeto original; boa precisão; disponível via Ultralytics</td><td>Tende a exigir mais memória/dados; ajuste mais sensível</td><td>Idem (formato YOLO via Ultralytics)</td><td>Média-alta — suportado por configuração (<code>ORBE_MODEL_FAMILY=rtdetr</code>) para comparação</td></tr>
+<tr><td>ResNet</td><td>Classificação de imagem inteira</td><td>Simples; bom para "cena com/sem ocorrência"</td><td>Não localiza objetos; não deve ser usado como detector; sem evidência visual por caixa</td><td>Requer rótulos por imagem</td><td>Baixa como principal; possível complemento de triagem (não implementado)</td></tr>
+<tr><td>Modelos temporais (ex.: CNN+LSTM, transformers de vídeo, rastreamento + regras)</td><td>Eventos em sequências</td><td>Capturam eventos que não aparecem em um quadro (veículo parado, queda de velocidade)</td><td>Exigem vídeo, anotações temporais e mais computação</td><td>DoTA, AI City, Nexar, ACCIDENT</td><td>Trabalho futuro</td></tr></table>
+
+<h2>6. Justificativa do modelo escolhido</h2>
+<p>Foi escolhido <strong>YOLO11 (Ultralytics)</strong> como detector principal porque: (a) devolve classe, confiança e caixa, necessárias para as evidências visuais e a interface; (b) permite treinamento personalizado com datasets de caixas 2D; (c) é rápido para uso interativo; (d) o mesmo código suporta RT-DETR e YOLOv8. O classificador ResNet não foi usado como detector. E um detector de veículos não é tratado como prova de acidente: por isso o sistema distingue dois modos (seção 10). No protótipo, sem pesos treinados em acidentes, o modelo carregado é o <code>yolo11s.pt</code> (COCO), que apenas detecta veículos e pessoas.</p>
+
+<h2>7. Arquitetura da solução</h2>
+<img src="diagrama_arquitetura.png" alt="Diagrama de arquitetura"><div class="cap">Figura 1 — Arquitetura atualizada, com a etapa 3 (inferência visual) detalhada.</div>
+<pre>ORBE/  app.py · config.py · rules.json
+ services/  image_processing · inference · occurrence_classifier · analysis_service · llm_service
+ routes/    main_routes · analysis_routes · history_routes
+ database/  db · models          templates/ · static/ · tools/ · tests/</pre>
+<p>Cada responsabilidade está em um módulo: <code>image_processing</code> (arquivos e imagens), <code>inference</code> (modelo), <code>occurrence_classifier</code> (regras, função pura), <code>analysis_service</code> (orquestra 5.1→5.6), <code>database</code> (persistência) e <code>routes</code> (HTTP). O detector é injetável (<code>create_app(detector=...)</code>), o que permite testar sem o modelo.</p>
+
+<h2>8. Funcionamento detalhado da inferência visual</h2>
+<ol><li><strong>Entrada</strong>: a imagem validada e convertida para BGR (NumPy), com lado máximo de 2560 px.</li>
+<li><strong>Pré-processamento do modelo</strong>: o preditor do Ultralytics aplica <em>letterbox</em> para <code>imgsz=640</code> (mantém a proporção, com bordas), converte para RGB/CHW e normaliza para [0,1] (÷255). Esses passos ficam dentro da biblioteca; o ORBE registra o <code>imgsz</code> usado.</li>
+<li><strong>Rede neural</strong>: <em>backbone</em> extrai características, <em>neck</em> combina escalas e <em>head</em> prediz caixas e classes.</li>
+<li><strong>Pós-processamento</strong>: filtro de confiança 0,25, NMS com IoU 0,5 e <code>agnostic_nms</code> (evita o mesmo veículo contado como duas classes); caixas devolvidas em pixels da imagem analisada.</li>
+<li><strong>Detecções</strong>: cada uma recebe categoria (veículo, pedestre/ciclista, acidente, outro) conforme <code>rules.json</code>; são ordenadas por confiança. O tempo de inferência é medido só nesta etapa.</li>
+<li><strong>Modo do modelo</strong>: se o modelo tem classes de acidente listadas em <code>rules.json</code>, ativa-se o modo "acidentes"; caso contrário, "genérico".</li></ol>
+<p>O adaptador do Ultralytics foi verificado por testes contra um módulo <code>ultralytics</code> simulado que imita a API; <strong>não foi executado com o modelo real no ambiente de desenvolvimento</strong>.</p>
+
+<h2>9. Pré-processamento</h2>
+<p>Verificação de extensão (JPG/JPEG/PNG), tamanho (padrão 10 MB), nome seguro (<code>secure_filename</code>; o arquivo é salvo como o ID da análise), integridade real (<code>PIL.verify</code>, conteúdo deve ser JPEG ou PNG, mesmo com extensão correta), proteção contra imagens gigantes (50 MP), lado mínimo de 32 px, correção de orientação EXIF, conversão para RGB (remove canal alfa) e para BGR, e redução se o lado exceder 2560 px. Calculam-se também a nitidez (variância do Laplaciano) e o brilho médio, usados pelo classificador.</p>
+
+<h2>10. Classificação de possíveis ocorrências</h2>
+<p>A função <code>classify()</code> é independente e devolve um de três estados, com as regras acionadas (<code>reasons</code>). Os limiares ficam em <code>rules.json</code>.</p>
+<table><tr><th>Regra</th><th>Modo</th><th>Condição</th><th>Resultado</th></tr>
+<tr><td>A1</td><td>Acidentes</td><td>Classe de acidente com conf ≥ 0,50 e área ≥ 0,2% da imagem, <em>e</em> corroboração: conf ≥ 0,70, ou veículo sobreposto, ou ≥ 2 detecções</td><td>Possível ocorrência (notifica)</td></tr>
+<tr><td>A2 / A3</td><td>Acidentes</td><td>Classe de acidente sem corroboração (A2) ou com conf entre 0,25 e 0,50 / área muito pequena (A3)</td><td>Inconclusivo</td></tr>
+<tr><td>G1</td><td>Genérico</td><td>Dois veículos (conf ≥ 0,50) com IoU entre 0,50 e 0,90 (acima disso é considerado duplicata)</td><td>Possível — rotulado como <em>indício geométrico</em></td></tr>
+<tr><td>G2</td><td>Genérico</td><td>IoU entre 0,30 e 0,50</td><td>Inconclusivo</td></tr>
+<tr><td>Q1</td><td>Ambos</td><td>Imagem pouco nítida, escura ou estourada (sem evidência de ocorrência)</td><td>Inconclusivo</td></tr>
+<tr><td>N0 / N1</td><td>Ambos</td><td>Nenhuma detecção / sem veículos</td><td>Inconclusivo (não se pode afirmar que a cena é normal)</td></tr>
+<tr><td>N2</td><td>Ambos</td><td>Veículos detectados e nenhuma regra disparou</td><td>Nenhuma ocorrência (não comprova ausência)</td></tr></table>
+<p>A "confiança" exibida é a confiança do modelo nas detecções que sustentam o resultado (não uma probabilidade de acidente). Em modo genérico, a sobreposição de veículos também ocorre por oclusão e perspectiva, de modo que G1 produz falsos positivos esperados; a validação humana existe para isso. As regras são heurísticas definidas pelo grupo, <strong>ainda não calibradas com dados reais</strong>.</p>
+
+<h2>11. Sistema de notificação</h2>
+<p>Por padrão, notifica-se apenas quando o resultado é "possível ocorrência"; casos inconclusivos entram na fila de revisão sem notificação (configurável em <code>rules.json → notification</code>). A interface destaca o alerta e exibe, no cabeçalho, o número de casos aguardando validação. O prototipo não envia mensagens externas: "notificar" significa alertar o operador na interface.</p>
+
+<h3>11.1 Triagem para a Persona 3 (Agente de Atendimento Pré-Hospitalar)</h3>
+<p>O ORBE foi orientado ao fluxo da Persona 3. Depois da classificação, <code>services/aph_triage.py</code> monta um resumo de triagem a partir das detecções com confiança ≥ 0,40: contagem de veículos, pessoas, motos/bicicletas e veículos pesados, e indícios de fogo ou capotamento (estes dois só existem se o modelo tiver essas classes). A prioridade é <strong>alta</strong> quando há possível ocorrência e pelo menos um agravante (pessoa, duas rodas, veículo pesado, fogo, capotamento ou ≥ 3 veículos), <strong>média</strong> quando há possível ocorrência sem agravantes, <strong>verificar</strong> quando o resultado é inconclusivo e <strong>sem acionamento</strong> quando não há indício. A tela sugere recursos (por exemplo, USA/USB, resgate, sinalização) e um checklist de confirmação da cena. As sugestões são <em>indicativas</em>, baseadas só na imagem; a decisão sobre recursos é da regulação médica. O sistema não estima gravidade clínica nem número de vítimas: "pessoas detectadas" é apenas uma contagem de caixas.</p>
+<p>Ao confirmar, o operador registra o acionamento e o sistema abre o acompanhamento do atendimento (<code>dispatch_events</code>): equipe acionada → a caminho → no local → concluído, em ordem obrigatória e com horário e responsável. Os limiares da triagem ficam em <code>rules.json → aph</code> e ainda não foram calibrados com a equipe de APH.</p>
+<h2>12. Validação humana</h2>
+<p>O operador pode <strong>confirmar</strong> (opcionalmente corrigindo o tipo), <strong>rejeitar</strong> ou <strong>solicitar análise adicional</strong>. Regras: confirmar exige o responsável; a decisão é gravada em <code>human_decisions</code> (append-only), separada de <code>analyses</code>, que nunca é alterada; confirmada/corrigida cria um registro em <code>definitive_occurrences</code> com evidência, responsável, data e modelo; rejeitada <em>nunca</em> cria registro definitivo; decisões finais são imutáveis; análise adicional mantém o caso aberto. Resultados "sem ocorrência" não exigem validação.</p>
+
+<h2>13. Interface desenvolvida</h2>
+<p>A interface foi pensada para o operador que apoia o APH e segue a identidade da logo: fundo navy, lilás como cor principal, azul e verde das órbitas, e cores de alerta só em estados operacionais. Telas: <strong>Central APH</strong> (indicadores reais do banco, fila prioritária e atendimentos em andamento), <strong>Analisar imagem</strong> (upload com varredura animada durante o processamento), resultado com anel de prioridade, imagem com caixas desenhadas em tempo real, contagens da cena, recursos sugeridos, checklist, motivos das regras, resumo e decisão do operador com linha do tempo do atendimento, <strong>Fila de acionamento</strong> (ordenada por prioridade), <strong>Histórico</strong> com filtros e <strong>Configurações</strong> (somente leitura). As animações são em CSS e JavaScript puro, sem bibliotecas, e respeitam a preferência de movimento reduzido do sistema.</p>
+<img src="screens/n6_dash2.png" alt="Central APH"><div class="cap">Figura 2 — Central APH. Capturas feitas com <strong>detector de teste e imagem sintética</strong> (apenas para ilustrar a interface; não representam o desempenho do modelo).</div>
+<img src="screens/n3_result.png" alt="Resultado"><div class="cap">Figura 3 — Tela de resultado com triagem para o APH (mesmas condições da Figura 2).</div>
+<img src="screens/n5_queue.png" alt="Fila"><div class="cap">Figura 4 — Fila de acionamento.</div>
+
+<h2>14. Testes realizados</h2>
+<p>75 testes automatizados (<code>python -m pytest -q</code>), todos aprovados no ambiente de desenvolvimento. Usam um <em>detector de teste</em> roteirizado e imagens sintéticas; verificam a lógica, não o modelo.</p>
+<table><tr><th>Requisito</th><th>Cobertura</th></tr>
+<tr><td>Imagem com possível ocorrência</td><td>Fluxo completo nos dois modos; corroboração; notificação</td></tr>
+<tr><td>Imagem sem ocorrência</td><td>Resultado "nenhuma", sem validação exigida</td></tr>
+<tr><td>Imagem inconclusiva</td><td>Sem detecções, imagem borrada/escura/estourada, evidência fraca, sobreposição moderada</td></tr>
+<tr><td>Arquivo inválido</td><td>Extensão proibida, arquivo corrompido ou truncado, formato falso com extensão válida, imagem pequena, arquivo vazio/ausente, acima do limite; nada fica em disco</td></tr>
+<tr><td>Erro durante a inferência</td><td>Erro do modelo (500), modelo indisponível (503), erro inesperado sem vazar detalhes; nada gravado</td></tr>
+<tr><td>Confirmação / rejeição humana</td><td>Registro definitivo × não definitivo; correção de tipo; análise adicional; imutabilidade; responsável obrigatório; IDs maliciosos</td></tr>
+<tr><td>Outros</td><td>Filtros do histórico, indicadores, <em>path traversal</em> em mídia, adaptador Ultralytics (módulo simulado), cálculo das métricas de <code>evaluate.py</code></td></tr></table>
+
+<h2>15. Resultados obtidos</h2>
+<ul><li>Testes automatizados: <strong>75/75 aprovados</strong>.</li>
+<li>Interface verificada visualmente (Chromium) com detector de teste: sem erros de JavaScript.</li>
+<li><strong>Métricas do modelo (precisão, recall, F1, matriz de confusão, mAP, tempo de inferência): não medidas.</strong> Motivos: ausência de datasets e de pesos no ambiente de desenvolvimento.</li></ul>
+<p><strong>Como obtê-las:</strong> (1) converter a divisão de teste do dataset escolhido para YOLO e rodar <code>python tools/train_detector.py --data data.yaml --val-only</code> (mAP, precisão e recall por classe); (2) rodar <code>python -m tools.evaluate --images ... --labels ...</code> para precisão/recall/F1/matriz de confusão do sistema completo e tempos de inferência. A divisão treino/validação/teste deve ser feita por cena/vídeo para evitar vazamento. Os resultados devem ser incluídos neste relatório somente após serem medidos.</p>
+
+<h2>16. Limitações</h2>
+<ul><li>Sem modelo treinado em acidentes, o sistema usa o COCO e só gera <em>indícios</em> geométricos, com falsos positivos e negativos esperados; ele não reconhece acidente.</li>
+<li>Análise de <strong>quadro único</strong>: eventos temporais (veículo parado, queda de velocidade) não são identificáveis.</li>
+<li>Limiares das regras não calibrados com dados reais.</li>
+<li>O caminho com o modelo real (carga de pesos, download) não pôde ser exercitado no ambiente de desenvolvimento.</li>
+<li>Não há autenticação nem CSRF: o protótipo é para uso local, e o responsável pela validação é um campo de texto.</li>
+<li>Licenças (Ultralytics AGPL-3.0 e dos datasets) não foram analisadas juridicamente.</li>
+<li>Integração com LLM opcional não testada contra um serviço real (há testes apenas do resumo padrão).</li></ul>
+
+<h2>17. Melhorias futuras</h2>
+<ul><li>Fine-tuning de YOLO11/RT-DETR com TUMTraf-Accid3nD (e UA-DETRAC como apoio), com avaliação por cena e comparação YOLO11 × RT-DETR.</li>
+<li>Módulo temporal sobre vídeo (rastreamento + regras, depois modelos de vídeo avaliados com DoTA, AI City, ACCIDENT, Nexar).</li>
+<li>Calibração dos limiares com dados reais e curva precisão-recall; classificador de triagem de cena (ResNet) como complemento.</li>
+<li>Autenticação, perfis de operador, notificações externas, versionamento do modelo e de regras na auditoria, ingestão de câmeras.</li>
+<li>Resumo com LLM validado, mantendo as restrições (não cria detecções, não confirma).</li></ul>
+
+<h2>18. Conclusão</h2>
+<p>O protótipo implementa o fluxo completo da arquitetura: recebimento, pré-processamento, inferência com YOLO/RT-DETR, classificação por regras documentadas em três estados, notificação, validação humana separada do resultado automático e histórico auditável, com interface própria. Sua limitação central é honesta e documentada: sem um modelo treinado em acidentes, o ORBE sinaliza apenas indícios e depende da pessoa para qualquer confirmação. O próximo passo de maior valor é treinar e avaliar o detector com dados de câmeras de rodovia, preenchendo a seção 15 com métricas medidas.</p>
+</body></html>
